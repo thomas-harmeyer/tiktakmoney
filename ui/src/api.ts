@@ -139,7 +139,7 @@ export const createGameGameIdPost = (
       
       
       return customInstance<CreateGameGameIdPost200>(
-      {url: `http://localhost:8000/game/${id}`, method: 'POST',
+      {url: `/api/game/${id}`, method: 'POST',
         params
     },
       options);
@@ -197,14 +197,14 @@ export const getGameByIdGameIdGet = (
       
       
       return customInstance<Game>(
-      {url: `http://localhost:8000/game/${id}`, method: 'GET', signal
+      {url: `/api/game/${id}`, method: 'GET', signal
     },
       options);
     }
   
 
 export const getGetGameByIdGameIdGetQueryKey = (id: string,) => {
-    return [`http://localhost:8000/game/${id}`] as const;
+    return [`/api/game/${id}`] as const;
     }
 
     
@@ -338,7 +338,7 @@ export const deleteGameGameIdDelete = (
       
       
       return customInstance<DeleteGameGameIdDelete200>(
-      {url: `http://localhost:8000/game/${id}`, method: 'DELETE'
+      {url: `/api/game/${id}`, method: 'DELETE'
     },
       options);
     }
@@ -395,7 +395,7 @@ export const makeBetGameIdBetPost = (
       
       
       return customInstance<MakeBetGameIdBetPost200>(
-      {url: `http://localhost:8000/game/${id}/bet`, method: 'POST',
+      {url: `/api/game/${id}/bet`, method: 'POST',
         params
     },
       options);
@@ -453,7 +453,7 @@ export const makeMoveGameIdMovePost = (
       
       
       return customInstance<MakeMoveGameIdMovePost200>(
-      {url: `http://localhost:8000/game/${id}/move`, method: 'POST',
+      {url: `/api/game/${id}/move`, method: 'POST',
         params
     },
       options);

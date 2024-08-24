@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel, ConfigDict, computed_field
 from pydantic.alias_generators import to_camel
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 
 games: dict[str, Game] = {}
 
@@ -53,8 +54,9 @@ class Game(BaseModel):
         for round in self.rounds:
             [bet1, bet2] = round.bets
             if bet1 is not None and bet2 is not None:
-                player1.money -= bet1
-                player2.money -= bet2
+                if bet1 == bet2:
+                    player1.money -= bet1
+                    player2.money -= bet2
 
         return (player1, player2)
 
@@ -168,7 +170,7 @@ class Game(BaseModel):
         self.rounds.append(Round())
 
 
-app = FastAPI()
+app = FastAPI(root_path="/api")
 origins = ["*"]
 
 app.add_middleware(
@@ -217,3 +219,7 @@ def delete_game(id: str) -> str | None:
     if game is None:
         return f"No game of id: {id}"
     del games[id]
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=5000, reload=True)
