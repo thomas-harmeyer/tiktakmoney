@@ -59,9 +59,9 @@ class Game(BaseModel):
                     player2.money -= bet2
                 elif bet1 > bet2:
                     player1.money -= bet1
-                    player2.money += bet2
+                    player2.money += bet1
                 else:
-                    player1.money += bet1
+                    player1.money += bet2
                     player2.money -= bet2
 
         return (player1, player2)
