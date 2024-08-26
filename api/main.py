@@ -1,6 +1,6 @@
 from __future__ import annotations
 from typing import Literal
-from fastapi import FastAPI
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel, ConfigDict, computed_field
 from pydantic.alias_generators import to_camel
 from fastapi.middleware.cors import CORSMiddleware
@@ -33,6 +33,7 @@ class Round(BaseModel):
 
 class Game(BaseModel):
     model_config = ConfigDict(alias_generator=to_camel, populate_by_name=True)
+    id: str
     users: tuple[str, str]
     rounds: list[Round]
 
@@ -188,20 +189,69 @@ app.add_middleware(
 )
 
 
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: dict[str, list[WebSocket]] = dict()
+
+    async def connect(self, id: str, websocket: WebSocket):
+        await websocket.accept()
+        if id in self.active_connections:
+            self.active_connections[id].append(websocket)
+        else:
+            self.active_connections[id] = [websocket]
+
+    def disconnect(self, id: str, websocket: WebSocket):
+        if id in self.active_connections:
+            self.active_connections[id] = [
+                conn for conn in self.active_connections[id] if conn != websocket
+            ]
+
+    async def broadcast_game(self, game: Game):
+        if game.id not in self.active_connections:
+            return
+
+        for conn in self.active_connections[game.id]:
+            await conn.send_text(game.model_dump_json())
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/game/{id}")
+async def websocket_endpoint(id: str, websocket: WebSocket):
+    await manager.connect(id, websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            print(data)
+    except WebSocketDisconnect:
+        manager.disconnect(id, websocket)
+
+
 @app.post("/game/{id}")
-def create_game(id: str, username: str) -> str | None:
+async def create_game(id: str, username: str) -> str | None:
     if id == "" or username == "":
         return "Missing id or username"
 
     game = games.get(id)
     if game is None:
-        games[id] = Game(users=(username, ""), rounds=[Round()])
+        game = Game(id=id, users=(username, ""), rounds=[Round()])
+        games[id] = game
     else:
         if game.users[1] != "":
             return "There's already 2 players in this game"
         if game.users[0] == username:
             return "There's already a user with that name"
         game.users = (game.users[0], username)
+
+    await manager.broadcast_game(game)
+
+
+@app.get("/lobbies")
+def get_open_lobbies() -> list[str]:
+    return [
+        game.id for game in games.values() if game.users[0] == "" or game.users[1] == ""
+    ]
 
 
 @app.get("/game/{id}")
@@ -210,13 +260,19 @@ def get_game_by_id(id: str) -> Game:
 
 
 @app.post("/game/{id}/bet")
-def make_bet(id: str, username: str, dollars: int) -> str | None:
-    return games[id].make_bet(username, dollars)
+async def make_bet(id: str, username: str, dollars: int) -> str | None:
+    game = games[id]
+    res = game.make_bet(username, dollars)
+    await manager.broadcast_game(game)
+    return res
 
 
 @app.post("/game/{id}/move")
-def make_move(id: str, username: str, row: int, col: int) -> str | None:
-    return games[id].make_move(username, row, col)
+async def make_move(id: str, username: str, row: int, col: int) -> str | None:
+    game = games[id]
+    res = game.make_move(username, row, col)
+    await manager.broadcast_game(game)
+    return res
 
 
 @app.delete("/game/{id}")

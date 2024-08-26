@@ -4,11 +4,7 @@
  * FastAPI
  * OpenAPI spec version: 0.1.0
  */
-import {
-  useMutation,
-  useQuery,
-  useSuspenseQuery
-} from '@tanstack/react-query'
+import { useMutation, useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import type {
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
@@ -21,23 +17,23 @@ import type {
   UseQueryOptions,
   UseQueryResult,
   UseSuspenseQueryOptions,
-  UseSuspenseQueryResult
-} from '@tanstack/react-query'
-import { customInstance } from './lib/axiosInstance';
-import type { ErrorType } from './lib/axiosInstance';
+  UseSuspenseQueryResult,
+} from "@tanstack/react-query";
+import { customInstance } from "./lib/axiosInstance";
+import type { ErrorType } from "./lib/axiosInstance";
 export type MakeMoveGameIdMovePost200 = string | null;
 
 export type MakeMoveGameIdMovePostParams = {
-username: string;
-row: number;
-col: number;
+  username: string;
+  row: number;
+  col: number;
 };
 
 export type MakeBetGameIdBetPost200 = string | null;
 
 export type MakeBetGameIdBetPostParams = {
-username: string;
-dollars: number;
+  username: string;
+  dollars: number;
 };
 
 export type DeleteGameGameIdDelete200 = string | null;
@@ -45,7 +41,7 @@ export type DeleteGameGameIdDelete200 = string | null;
 export type CreateGameGameIdPost200 = string | null;
 
 export type CreateGameGameIdPostParams = {
-username: string;
+  username: string;
 };
 
 export type ValidationErrorLocItem = string | number;
@@ -76,8 +72,8 @@ export interface Player {
   username: string;
 }
 
-export type MovePlayerPosition = typeof MovePlayerPosition[keyof typeof MovePlayerPosition];
-
+export type MovePlayerPosition =
+  (typeof MovePlayerPosition)[keyof typeof MovePlayerPosition];
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const MovePlayerPosition = {
@@ -98,23 +94,25 @@ export interface HTTPValidationError {
 export type GameWinner = number | null;
 
 // eslint-disable-next-line @typescript-eslint/no-redeclare
-export const GameState = {  winner: 'winner',
-  tie: 'tie',
-  betting: 'betting',
-  moving: 'moving',
-} as const
+export const GameState = {
+  winner: "winner",
+  tie: "tie",
+  betting: "betting",
+  moving: "moving",
+} as const;
 export type GameBoardItemItem = number | null;
 
 export interface Game {
   readonly board: readonly GameBoardItemItem[][];
   readonly catsgame: boolean;
+  id: string;
   /**
    * @minItems 2
    * @maxItems 2
    */
   readonly players: [Player, Player];
   rounds: Round[];
-  readonly state: typeof GameState[keyof typeof GameState] ;
+  readonly state: (typeof GameState)[keyof typeof GameState];
   /**
    * @minItems 2
    * @maxItems 2
@@ -123,381 +121,823 @@ export interface Game {
   readonly winner: GameWinner;
 }
 
-
-
-
 type SecondParameter<T extends (...args: any) => any> = Parameters<T>[1];
-
 
 /**
  * @summary Create Game
  */
 export const createGameGameIdPost = (
-    id: string,
-    params: CreateGameGameIdPostParams,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<CreateGameGameIdPost200>(
-      {url: `/api/game/${id}`, method: 'POST',
-        params
-    },
-      options);
-    }
-  
+  id: string,
+  params: CreateGameGameIdPostParams,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<CreateGameGameIdPost200>(
+    { url: `/api/game/${id}`, method: "POST", params },
+    options
+  );
+};
 
+export const getCreateGameGameIdPostMutationOptions = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createGameGameIdPost>>,
+    TError,
+    { id: string; params: CreateGameGameIdPostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createGameGameIdPost>>,
+  TError,
+  { id: string; params: CreateGameGameIdPostParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
-export const getCreateGameGameIdPostMutationOptions = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGameGameIdPost>>, TError,{id: string;params: CreateGameGameIdPostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof createGameGameIdPost>>, TError,{id: string;params: CreateGameGameIdPostParams}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createGameGameIdPost>>,
+    { id: string; params: CreateGameGameIdPostParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
 
-      
+    return createGameGameIdPost(id, params, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createGameGameIdPost>>, {id: string;params: CreateGameGameIdPostParams}> = (props) => {
-          const {id,params} = props ?? {};
+export type CreateGameGameIdPostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createGameGameIdPost>>
+>;
 
-          return  createGameGameIdPost(id,params,requestOptions)
-        }
+export type CreateGameGameIdPostMutationError = ErrorType<HTTPValidationError>;
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateGameGameIdPostMutationResult = NonNullable<Awaited<ReturnType<typeof createGameGameIdPost>>>
-    
-    export type CreateGameGameIdPostMutationError = ErrorType<HTTPValidationError>
-
-    /**
+/**
  * @summary Create Game
  */
-export const useCreateGameGameIdPost = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createGameGameIdPost>>, TError,{id: string;params: CreateGameGameIdPostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof createGameGameIdPost>>,
-        TError,
-        {id: string;params: CreateGameGameIdPostParams},
-        TContext
-      > => {
+export const useCreateGameGameIdPost = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createGameGameIdPost>>,
+    TError,
+    { id: string; params: CreateGameGameIdPostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createGameGameIdPost>>,
+  TError,
+  { id: string; params: CreateGameGameIdPostParams },
+  TContext
+> => {
+  const mutationOptions = getCreateGameGameIdPostMutationOptions(options);
 
-      const mutationOptions = getCreateGameGameIdPostMutationOptions(options);
+  return useMutation(mutationOptions);
+};
 
-      return useMutation(mutationOptions);
-    }
-    
 /**
  * @summary Get Game By Id
  */
 export const getGameByIdGameIdGet = (
-    id: string,
- options?: SecondParameter<typeof customInstance>,signal?: AbortSignal
+  id: string,
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
 ) => {
-      
-      
-      return customInstance<Game>(
-      {url: `/api/game/${id}`, method: 'GET', signal
-    },
-      options);
-    }
-  
+  return customInstance<Game>(
+    { url: `/api/game/${id}`, method: "GET", signal },
+    options
+  );
+};
 
-export const getGetGameByIdGameIdGetQueryKey = (id: string,) => {
-    return [`/api/game/${id}`] as const;
-    }
+export const getGetGameByIdGameIdGetQueryKey = (id: string) => {
+  return [`/api/game/${id}`] as const;
+};
 
-    
-export const getGetGameByIdGameIdGetQueryOptions = <TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetGameByIdGameIdGetQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetGameByIdGameIdGetQueryKey(id);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetGameByIdGameIdGetQueryKey(id);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getGameByIdGameIdGet>>
+  > = ({ signal }) => getGameByIdGameIdGet(id, requestOptions, signal);
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGameByIdGameIdGet>>> = ({ signal }) => getGameByIdGameIdGet(id, requestOptions, signal);
+export type GetGameByIdGameIdGetQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGameByIdGameIdGet>>
+>;
+export type GetGameByIdGameIdGetQueryError = ErrorType<HTTPValidationError>;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetGameByIdGameIdGetQueryResult = NonNullable<Awaited<ReturnType<typeof getGameByIdGameIdGet>>>
-export type GetGameByIdGameIdGetQueryError = ErrorType<HTTPValidationError>
-
-
-export function useGetGameByIdGameIdGet<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>> & Pick<
+export function useGetGameByIdGameIdGet<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
           TError,
           TData
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
-
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetGameByIdGameIdGet<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>> & Pick<
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetGameByIdGameIdGet<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    > &
+      Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
           TError,
           TData
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetGameByIdGameIdGet<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey }
+        >,
+        "initialData"
+      >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetGameByIdGameIdGet<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Game By Id
  */
 
-export function useGetGameByIdGameIdGet<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useGetGameByIdGameIdGet<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetGameByIdGameIdGetQueryOptions(id, options);
 
-  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
 
-  const queryOptions = getGetGameByIdGameIdGetQueryOptions(id,options)
-
-  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
 
-
-
-export const getGetGameByIdGameIdGetSuspenseQueryOptions = <TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(id: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetGameByIdGameIdGetSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
 ) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
 
-const {query: queryOptions, request: requestOptions} = options ?? {};
+  const queryKey =
+    queryOptions?.queryKey ?? getGetGameByIdGameIdGetQueryKey(id);
 
-  const queryKey =  queryOptions?.queryKey ?? getGetGameByIdGameIdGetQueryKey(id);
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getGameByIdGameIdGet>>
+  > = ({ signal }) => getGameByIdGameIdGet(id, requestOptions, signal);
 
-  
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
 
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGameByIdGameIdGet>>> = ({ signal }) => getGameByIdGameIdGet(id, requestOptions, signal);
+export type GetGameByIdGameIdGetSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getGameByIdGameIdGet>>
+>;
+export type GetGameByIdGameIdGetSuspenseQueryError =
+  ErrorType<HTTPValidationError>;
 
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData> & { queryKey: QueryKey }
-}
-
-export type GetGameByIdGameIdGetSuspenseQueryResult = NonNullable<Awaited<ReturnType<typeof getGameByIdGameIdGet>>>
-export type GetGameByIdGameIdGetSuspenseQueryError = ErrorType<HTTPValidationError>
-
-
-export function useGetGameByIdGameIdGetSuspense<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options: { query:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetGameByIdGameIdGetSuspense<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey }
-export function useGetGameByIdGameIdGetSuspense<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-
-  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey }
+export function useGetGameByIdGameIdGetSuspense<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options: {
+    query: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetGameByIdGameIdGetSuspense<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetGameByIdGameIdGetSuspense<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
 /**
  * @summary Get Game By Id
  */
 
-export function useGetGameByIdGameIdGetSuspense<TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError = ErrorType<HTTPValidationError>>(
- id: string, options?: { query?:Partial<UseSuspenseQueryOptions<Awaited<ReturnType<typeof getGameByIdGameIdGet>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useGetGameByIdGameIdGetSuspense<
+  TData = Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+  TError = ErrorType<HTTPValidationError>
+>(
+  id: string,
+  options?: {
+    query?: Partial<
+      UseSuspenseQueryOptions<
+        Awaited<ReturnType<typeof getGameByIdGameIdGet>>,
+        TError,
+        TData
+      >
+    >;
+    request?: SecondParameter<typeof customInstance>;
+  }
+): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetGameByIdGameIdGetSuspenseQueryOptions(id, options);
 
-  ):  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const query = useSuspenseQuery(queryOptions) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: QueryKey };
 
-  const queryOptions = getGetGameByIdGameIdGetSuspenseQueryOptions(id,options)
-
-  const query = useSuspenseQuery(queryOptions) as  UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
-
-  query.queryKey = queryOptions.queryKey ;
+  query.queryKey = queryOptions.queryKey;
 
   return query;
 }
-
-
-
 
 /**
  * @summary Delete Game
  */
 export const deleteGameGameIdDelete = (
-    id: string,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<DeleteGameGameIdDelete200>(
-      {url: `/api/game/${id}`, method: 'DELETE'
-    },
-      options);
-    }
-  
+  id: string,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<DeleteGameGameIdDelete200>(
+    { url: `/api/game/${id}`, method: "DELETE" },
+    options
+  );
+};
 
+export const getDeleteGameGameIdDeleteMutationOptions = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
-export const getDeleteGameGameIdDeleteMutationOptions = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteGameGameIdDelete>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteGameGameIdDelete>>, TError,{id: string}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
 
-      
+    return deleteGameGameIdDelete(id, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteGameGameIdDelete>>, {id: string}> = (props) => {
-          const {id} = props ?? {};
+export type DeleteGameGameIdDeleteMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteGameGameIdDelete>>
+>;
 
-          return  deleteGameGameIdDelete(id,requestOptions)
-        }
+export type DeleteGameGameIdDeleteMutationError =
+  ErrorType<HTTPValidationError>;
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteGameGameIdDeleteMutationResult = NonNullable<Awaited<ReturnType<typeof deleteGameGameIdDelete>>>
-    
-    export type DeleteGameGameIdDeleteMutationError = ErrorType<HTTPValidationError>
-
-    /**
+/**
  * @summary Delete Game
  */
-export const useDeleteGameGameIdDelete = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteGameGameIdDelete>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+export const useDeleteGameGameIdDelete = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteGameGameIdDelete>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationOptions = getDeleteGameGameIdDeleteMutationOptions(options);
+
+  return useMutation(mutationOptions);
+};
+
+/**
+ * @summary Get Open Lobbies
+ */
+export const getOpenLobbiesLobbiesGet = (
+  options?: SecondParameter<typeof customInstance>,
+  signal?: AbortSignal
+) => {
+  return customInstance<string[]>(
+    { url: `/api/lobbies`, method: "GET", signal },
+    options
+  );
+};
+
+export const getGetOpenLobbiesLobbiesGetQueryKey = () => {
+  return [`/api/lobbies`] as const;
+};
+
+export const getGetOpenLobbiesLobbiesGetQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetOpenLobbiesLobbiesGetQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>
+  > = ({ signal }) => getOpenLobbiesLobbiesGet(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetOpenLobbiesLobbiesGetQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>
+>;
+export type GetOpenLobbiesLobbiesGetQueryError = ErrorType<unknown>;
+
+export function useGetOpenLobbiesLobbiesGet<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options: {
+  query: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  > &
+    Pick<
+      DefinedInitialDataOptions<
+        Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
         TError,
-        {id: string},
-        TContext
-      > => {
+        TData
+      >,
+      "initialData"
+    >;
+  request?: SecondParameter<typeof customInstance>;
+}): DefinedUseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetOpenLobbiesLobbiesGet<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  > &
+    Pick<
+      UndefinedInitialDataOptions<
+        Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+        TError,
+        TData
+      >,
+      "initialData"
+    >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetOpenLobbiesLobbiesGet<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary Get Open Lobbies
+ */
 
-      const mutationOptions = getDeleteGameGameIdDeleteMutationOptions(options);
+export function useGetOpenLobbiesLobbiesGet<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetOpenLobbiesLobbiesGetQueryOptions(options);
 
-      return useMutation(mutationOptions);
-    }
-    
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
+export const getGetOpenLobbiesLobbiesGetSuspenseQueryOptions = <
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetOpenLobbiesLobbiesGetQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>
+  > = ({ signal }) => getOpenLobbiesLobbiesGet(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseSuspenseQueryOptions<
+    Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetOpenLobbiesLobbiesGetSuspenseQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>
+>;
+export type GetOpenLobbiesLobbiesGetSuspenseQueryError = ErrorType<unknown>;
+
+export function useGetOpenLobbiesLobbiesGetSuspense<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options: {
+  query: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetOpenLobbiesLobbiesGetSuspense<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+export function useGetOpenLobbiesLobbiesGetSuspense<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey };
+/**
+ * @summary Get Open Lobbies
+ */
+
+export function useGetOpenLobbiesLobbiesGetSuspense<
+  TData = Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+  TError = ErrorType<unknown>
+>(options?: {
+  query?: Partial<
+    UseSuspenseQueryOptions<
+      Awaited<ReturnType<typeof getOpenLobbiesLobbiesGet>>,
+      TError,
+      TData
+    >
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseSuspenseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetOpenLobbiesLobbiesGetSuspenseQueryOptions(options);
+
+  const query = useSuspenseQuery(queryOptions) as UseSuspenseQueryResult<
+    TData,
+    TError
+  > & { queryKey: QueryKey };
+
+  query.queryKey = queryOptions.queryKey;
+
+  return query;
+}
+
 /**
  * @summary Make Bet
  */
 export const makeBetGameIdBetPost = (
-    id: string,
-    params: MakeBetGameIdBetPostParams,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<MakeBetGameIdBetPost200>(
-      {url: `/api/game/${id}/bet`, method: 'POST',
-        params
-    },
-      options);
-    }
-  
+  id: string,
+  params: MakeBetGameIdBetPostParams,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<MakeBetGameIdBetPost200>(
+    { url: `/api/game/${id}/bet`, method: "POST", params },
+    options
+  );
+};
 
+export const getMakeBetGameIdBetPostMutationOptions = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
+    TError,
+    { id: string; params: MakeBetGameIdBetPostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
+  TError,
+  { id: string; params: MakeBetGameIdBetPostParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
-export const getMakeBetGameIdBetPostMutationOptions = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof makeBetGameIdBetPost>>, TError,{id: string;params: MakeBetGameIdBetPostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof makeBetGameIdBetPost>>, TError,{id: string;params: MakeBetGameIdBetPostParams}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
+    { id: string; params: MakeBetGameIdBetPostParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
 
-      
+    return makeBetGameIdBetPost(id, params, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof makeBetGameIdBetPost>>, {id: string;params: MakeBetGameIdBetPostParams}> = (props) => {
-          const {id,params} = props ?? {};
+export type MakeBetGameIdBetPostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof makeBetGameIdBetPost>>
+>;
 
-          return  makeBetGameIdBetPost(id,params,requestOptions)
-        }
+export type MakeBetGameIdBetPostMutationError = ErrorType<HTTPValidationError>;
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type MakeBetGameIdBetPostMutationResult = NonNullable<Awaited<ReturnType<typeof makeBetGameIdBetPost>>>
-    
-    export type MakeBetGameIdBetPostMutationError = ErrorType<HTTPValidationError>
-
-    /**
+/**
  * @summary Make Bet
  */
-export const useMakeBetGameIdBetPost = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof makeBetGameIdBetPost>>, TError,{id: string;params: MakeBetGameIdBetPostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
-        TError,
-        {id: string;params: MakeBetGameIdBetPostParams},
-        TContext
-      > => {
+export const useMakeBetGameIdBetPost = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
+    TError,
+    { id: string; params: MakeBetGameIdBetPostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof makeBetGameIdBetPost>>,
+  TError,
+  { id: string; params: MakeBetGameIdBetPostParams },
+  TContext
+> => {
+  const mutationOptions = getMakeBetGameIdBetPostMutationOptions(options);
 
-      const mutationOptions = getMakeBetGameIdBetPostMutationOptions(options);
+  return useMutation(mutationOptions);
+};
 
-      return useMutation(mutationOptions);
-    }
-    
 /**
  * @summary Make Move
  */
 export const makeMoveGameIdMovePost = (
-    id: string,
-    params: MakeMoveGameIdMovePostParams,
- options?: SecondParameter<typeof customInstance>,) => {
-      
-      
-      return customInstance<MakeMoveGameIdMovePost200>(
-      {url: `/api/game/${id}/move`, method: 'POST',
-        params
-    },
-      options);
-    }
-  
+  id: string,
+  params: MakeMoveGameIdMovePostParams,
+  options?: SecondParameter<typeof customInstance>
+) => {
+  return customInstance<MakeMoveGameIdMovePost200>(
+    { url: `/api/game/${id}/move`, method: "POST", params },
+    options
+  );
+};
 
+export const getMakeMoveGameIdMovePostMutationOptions = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
+    TError,
+    { id: string; params: MakeMoveGameIdMovePostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
+  TError,
+  { id: string; params: MakeMoveGameIdMovePostParams },
+  TContext
+> => {
+  const { mutation: mutationOptions, request: requestOptions } = options ?? {};
 
-export const getMakeMoveGameIdMovePostMutationOptions = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof makeMoveGameIdMovePost>>, TError,{id: string;params: MakeMoveGameIdMovePostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof makeMoveGameIdMovePost>>, TError,{id: string;params: MakeMoveGameIdMovePostParams}, TContext> => {
-const {mutation: mutationOptions, request: requestOptions} = options ?? {};
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
+    { id: string; params: MakeMoveGameIdMovePostParams }
+  > = (props) => {
+    const { id, params } = props ?? {};
 
-      
+    return makeMoveGameIdMovePost(id, params, requestOptions);
+  };
 
+  return { mutationFn, ...mutationOptions };
+};
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof makeMoveGameIdMovePost>>, {id: string;params: MakeMoveGameIdMovePostParams}> = (props) => {
-          const {id,params} = props ?? {};
+export type MakeMoveGameIdMovePostMutationResult = NonNullable<
+  Awaited<ReturnType<typeof makeMoveGameIdMovePost>>
+>;
 
-          return  makeMoveGameIdMovePost(id,params,requestOptions)
-        }
+export type MakeMoveGameIdMovePostMutationError =
+  ErrorType<HTTPValidationError>;
 
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type MakeMoveGameIdMovePostMutationResult = NonNullable<Awaited<ReturnType<typeof makeMoveGameIdMovePost>>>
-    
-    export type MakeMoveGameIdMovePostMutationError = ErrorType<HTTPValidationError>
-
-    /**
+/**
  * @summary Make Move
  */
-export const useMakeMoveGameIdMovePost = <TError = ErrorType<HTTPValidationError>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof makeMoveGameIdMovePost>>, TError,{id: string;params: MakeMoveGameIdMovePostParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationResult<
-        Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
-        TError,
-        {id: string;params: MakeMoveGameIdMovePostParams},
-        TContext
-      > => {
+export const useMakeMoveGameIdMovePost = <
+  TError = ErrorType<HTTPValidationError>,
+  TContext = unknown
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
+    TError,
+    { id: string; params: MakeMoveGameIdMovePostParams },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstance>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof makeMoveGameIdMovePost>>,
+  TError,
+  { id: string; params: MakeMoveGameIdMovePostParams },
+  TContext
+> => {
+  const mutationOptions = getMakeMoveGameIdMovePostMutationOptions(options);
 
-      const mutationOptions = getMakeMoveGameIdMovePostMutationOptions(options);
-
-      return useMutation(mutationOptions);
-    }
-    
+  return useMutation(mutationOptions);
+};

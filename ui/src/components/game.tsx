@@ -17,12 +17,14 @@ import {
 	CollapsibleContent,
 	CollapsibleTrigger,
 } from "./ui/collapsible";
+import { useGameWebhook } from "@/lib/useWebsocket";
 
 export const GameContainer = () => {
-	const { gameId, userId } = useLobby();
+	const { gameId, username: userId } = useLobby();
 	const { data: game } = useGetGameByIdGameIdGetSuspense(gameId, {
-		query: { refetchInterval: 3000 },
+		query: { refetchInterval: 25000 },
 	});
+	useGameWebhook(gameId);
 
 	const [selected, setSelected] = useState<[number, number] | undefined>(
 		undefined,
@@ -152,7 +154,7 @@ const BetInput = ({
 	game: Game;
 	playerPosition: number;
 }) => {
-	const { gameId, userId } = useLobby();
+	const { gameId, username: userId } = useLobby();
 	const mutation = useMakeBetGameIdBetPost();
 	const { toast } = useToast();
 
